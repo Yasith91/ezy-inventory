@@ -11,6 +11,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { ItemCard, Input } from "../../components";
 import attributeTypes from "../../utils";
 import { setInventoryItem } from "../../store/inventory/actions";
+import { debounce } from "lodash";
 
 const Inventory = ({ inventoryItemId }) => {
   const dispatch = useDispatch();
@@ -49,8 +50,11 @@ const Inventory = ({ inventoryItemId }) => {
         ? e.target.checked
         : e.target.value;
     const itemsClone = [...items];
+    console.log(JSON.stringify(items));
+    console.log(JSON.stringify(itemsClone));
     itemsClone[index][attributeName] = value;
     setItems(itemsClone);
+    console.log(e, index, attributeName, elementType);
     dispatch(setInventoryItem({ [inventoryId]: itemsClone }));
   };
 
@@ -125,12 +129,12 @@ const Inventory = ({ inventoryItemId }) => {
     return obj;
   };
 
-  const addNewItem = () => {
+  const addNewItem = debounce(() => {
     const itemsClone = items ? [...items] : [];
-    itemsClone.push(fields);
+    itemsClone.push({ ...fields });
     setItems(itemsClone);
     dispatch(setInventoryItem({ [inventoryId]: itemsClone }));
-  };
+  }, 500);
 
   const removeItem = (index) => {
     const itemsClone = [...items];
