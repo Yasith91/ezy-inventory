@@ -1,7 +1,8 @@
 const attributeTypes = [
   { value: "number", label: "Number" },
-  { value: "text", label: "Text" },
+  { value: "date", label: "Date" },
   { value: "checkbox", label: "Check Box" },
+  { value: "text", label: "Text" },
 ];
 
 export default attributeTypes;

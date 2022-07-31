@@ -1,16 +1,20 @@
 import * as types from "./actionTypes";
 
 const initialState = {
-  data: { test: "test obj" },
-  inventories: "",
+  inventories: [],
+  inventoryItems: {},
 };
 
 /* eslint import/no-anonymous-default-export: [2, {"allowArrowFunction": true}] */
 export default (state = initialState, action) => {
   switch (action.type) {
     case types.SET_INVENTORY_TYPE:
-      console.log(action);
-      return {...state, inventories: action.payload};
+      return { ...state, inventories: action.payload };
+    case types.SET_INVENTORY_ITEM:
+      return {
+        ...state,
+        inventoryItems: { ...state.inventoryItems, ...action.payload },
+      };
     default:
       return state;
   }

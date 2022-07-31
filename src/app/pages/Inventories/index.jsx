@@ -1,66 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Outlet } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
-import TextField from "@mui/material/TextField";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import NavigationIcon from "@mui/icons-material/Navigation";
 import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-// import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { v4 as uuidv4 } from "uuid";
-import throttle from "lodash/throttle";
-import debounce from "lodash/debounce";
-
 import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { getTestData } from "../../store/test/actions";
+import Select from "@mui/material/Select";
+
 import attributeTypes from "../../utils";
 import { ItemCard, Input } from "../../components";
 import { setInventoryTypes } from "../../store/inventory/actions";
 
-const list = [
-  // {
-  //   objType: "test title 1",
-  //   objTitle: "",
-  //   fields: [
-  //     { label: "ttt", type: "number" },
-  //     { label: "nnn", type: "text" },
-  //   ],
-  // },
-  // {
-  //   objType: "test title 2",
-  //   objTitle: "",
-  //   fields: [
-  //     { label: "s", type: "number" },
-  //     { label: "rrr", type: "checkbox" },
-  //   ],
-  // },
-];
-
 const Inventories = () => {
   const dispatch = useDispatch();
-  const inventories = useSelector((state) => {
-    console.log("sss", state);
-    return state.inventoryData.inventories;
-  });
+  const inventories = useSelector((state) => state.inventoryData.inventories);
   const [inventoryList, setInventoryList] = useState([...inventories]);
-
-  // const loggedInUser = useSelector((state) => {
-  //   console.log(state);
-  //   return state;
-  // });
-  // console.log("loggedInUser", loggedInUser);
-
-  // const handleChange = (event: SelectChangeEvent) => {
-  //   setAge(event.target.value);
-  // };
 
   useEffect(() => {
     dispatch(setInventoryTypes(inventoryList));
@@ -73,7 +31,6 @@ const Inventories = () => {
     const invList = [...inventoryList];
     invList[index].fields.push({ label: "", type: "text" });
     await setInventoryList(invList);
-    // updateInventories();
   };
 
   const addNewType = () => {
@@ -86,14 +43,12 @@ const Inventories = () => {
       fields: [{ label: "", type: "text" }],
     });
     setInventoryList(invList);
-    // updateInventories();
   };
 
   const removeItem = (index) => {
     const invList = [...inventoryList];
     invList.splice(index, 1);
     setInventoryList(invList);
-    // setInterval(updateInventories(), 3000);
   };
 
   const onValueChange = (e, index, index2, attribute) => {
@@ -105,11 +60,9 @@ const Inventories = () => {
       invList[index][attribute] = value;
     }
     setInventoryList(invList);
-    // updateInventories();
   };
 
   const renderContent = (data, index) => {
-    console.log(data.fields);
     return (
       <div>
         <Box
@@ -147,11 +100,6 @@ const Inventories = () => {
               )}
             </Select>
           </FormControl>
-          {/* <Input
-          label="Title"
-          value={data.objTitle}
-          onAction={(e) => onValueChange(e, index, null, "objTitle")}
-        /> */}
           {data.fields.map((obj, fieldIndex) => (
             <Input
               label="Field Name"
@@ -160,7 +108,6 @@ const Inventories = () => {
               inputProps={{
                 endAdornment: (
                   <>
-                    {/* <FormControl sx={{ minWidth: 120 }} size="small"> */}
                     <Select
                       sx={{ "& > div": { p: 1 } }}
                       id="demo-select-small"
@@ -176,7 +123,6 @@ const Inventories = () => {
                         <MenuItem value={type.value}>{type.label}</MenuItem>
                       ))}
                     </Select>
-                    {/* </FormControl> */}
                   </>
                 ),
               }}
@@ -195,8 +141,6 @@ const Inventories = () => {
       </div>
     );
   };
-
-  console.log("inventoryList", inventoryList);
 
   return (
     <Box sx={{ "& > :not(style)": { m: 1 } }}>
@@ -220,59 +164,9 @@ const Inventories = () => {
             />
           </Grid>
         ))}
-        {/* <Grid item lg={3} xs={12}>
-          <ItemCard />
-        </Grid>
-        <Grid item lg={3} xs={12}>
-          <ItemCard />
-        </Grid>
-        <Grid item lg={3} xs={12}>
-          <ItemCard />
-        </Grid>
-        <Grid item lg={3} xs={12}>
-          <ItemCard />
-        </Grid> */}
       </Grid>
     </Box>
-    // <div>
-    //   <h1>inventories</h1>
-    //   <Link
-    //     style={{ display: "block", margin: "1rem 0" }}
-    //     to={`/inventories/4444`}
-    //   >
-    //     test
-    //   </Link>
-    //   <Outlet />
-    // </div>
   );
 };
 
 export default Inventories;
-
-// import * as React from 'react';
-// import Box from '@mui/material/Box';
-// import Fab from '@mui/material/Fab';
-// import AddIcon from '@mui/icons-material/Add';
-// import EditIcon from '@mui/icons-material/Edit';
-// import FavoriteIcon from '@mui/icons-material/Favorite';
-// import NavigationIcon from '@mui/icons-material/Navigation';
-
-// export default function FloatingActionButtons() {
-//   return (
-//     <Box sx={{ '& > :not(style)': { m: 1 } }}>
-//       <Fab color="primary" aria-label="add">
-//         <AddIcon />
-//       </Fab>
-//       <Fab color="secondary" aria-label="edit">
-//         <EditIcon />
-//       </Fab>
-//       <Fab variant="extended">
-//         <NavigationIcon sx={{ mr: 1 }} />
-//         Navigate
-//       </Fab>
-//       <Fab disabled aria-label="like">
-//         <FavoriteIcon />
-//       </Fab>
-//     </Box>
-//   );
-// }

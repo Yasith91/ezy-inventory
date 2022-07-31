@@ -1,62 +1,170 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-// import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
 import { useParams } from "react-router-dom";
-
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
 import { ItemCard, Input } from "../../components";
 import attributeTypes from "../../utils";
-// import { getTestData } from "../store/test/actions";
+import { setInventoryItem } from "../../store/inventory/actions";
 
-const Inventory = () => {
-  //   const dispatch = useDispatch();
-  let params = useParams();
-  const [s, setS] = useState();
-  const [age, setAge] = React.useState("");
-  console.log(params);
-  //   useEffect(() => {
-  //     dispatch(getTestData());
-  //   }, [dispatch]);
+const Inventory = ({ inventoryItemId }) => {
+  const dispatch = useDispatch();
+  const inventoryId = useParams().inventoryId || inventoryItemId;
+  const inventories = useSelector((state) => state.inventoryData.inventories);
+  const inventoryItems = useSelector(
+    (state) => state.inventoryData.inventoryItems
+  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const inventoryList = inventoryItems ? inventoryItems[inventoryId] : [];
+  const [items, setItems] = useState(inventoryList || []);
+  const [fields, setFields] = useState([]);
+  const [selectedInventory, setInventory] = useState();
+
+  // useEffect(() => {
+  //   // console.log("init ===", items);
+  //   console.log(items, inventoryId);
+  //   if (!items) return;
+  //   // items.length > 0 &&
+  //   dispatch(setInventoryItem({ [inventoryId]: items }));
+  // }, [dispatch, inventoryId, items]);
+
+  useEffect(() => {
+    setItems(inventoryList);
+  }, [inventoryId]);
+
+  useEffect(() => {
+    const inventory = inventories.find((data) => data.id === inventoryId);
+    setFields(getFields(inventory.fields));
+    setInventory(inventory);
+  }, [inventories, inventoryId]);
+
+  const onValueChange = (e, index, attributeName, elementType = null) => {
+    const value =
+      elementType === attributeTypes[2].value
+        ? e.target.checked
+        : e.target.value;
+    const itemsClone = [...items];
+    itemsClone[index][attributeName] = value;
+    setItems(itemsClone);
+    dispatch(setInventoryItem({ [inventoryId]: itemsClone }));
+  };
+
+  const pickField = (field, item, index) => {
+    const type = field.type;
+    const attributeName = field.label.toLowerCase();
+    const value = item[attributeName];
+    switch (type) {
+      // number
+      case attributeTypes[0].value:
+        return (
+          <Input
+            sx={{ width: "95%" }}
+            label={field.label}
+            type={type}
+            value={value}
+            onAction={(e) => onValueChange(e, index, attributeName)}
+          />
+        );
+      // Date Picker
+      case attributeTypes[1].value:
+        return (
+          <Input
+            id="date"
+            sx={{ width: "95%" }}
+            label={field.label}
+            type={type}
+            value={value}
+            onAction={(e) => onValueChange(e, index, attributeName)}
+          />
+        );
+      // Check box
+      case attributeTypes[2].value:
+        return (
+          <FormControlLabel
+            sx={{ width: "95%" }}
+            control={<Checkbox defaultChecked checked={value} />}
+            label={field.label}
+            value={value}
+            onChange={(e) => onValueChange(e, index, attributeName, type)}
+          />
+        );
+      default:
+        return (
+          <Input
+            sx={{ width: "95%" }}
+            label={field.label}
+            type={type}
+            value={value}
+            onAction={(e) => onValueChange(e, index, attributeName)}
+          />
+        );
+    }
+  };
+
+  const renderContent = (item, index) => {
+    return (
+      <>
+        {selectedInventory?.fields?.map((field) =>
+          pickField(field, item, index)
+        )}
+      </>
+    );
+  };
+
+  const getFields = (fields) => {
+    let obj = {};
+    fields?.map((filed) => {
+      obj[filed.label.toLowerCase()] = "";
+      return null;
+    });
+    return obj;
+  };
+
+  const addNewItem = () => {
+    const itemsClone = items ? [...items] : [];
+    itemsClone.push(fields);
+    setItems(itemsClone);
+    dispatch(setInventoryItem({ [inventoryId]: itemsClone }));
+  };
+
+  const removeItem = (index) => {
+    const itemsClone = [...items];
+    itemsClone.splice(index, 1);
+    setItems(itemsClone);
+    dispatch(setInventoryItem({ [inventoryId]: itemsClone }));
+  };
 
   return (
-    <div>
-      <h1>Inventory Item</h1>
-      <ItemCard />
-      <Input
-        type="number"
-        value={s}
-        onAction={(e) => {
-          console.log(e);
-          setS(e.target.value);
-        }}
-        inputProps={{
-          endAdornment: (
-            <>
-              <FormControl sx={{ minWidth: 120 }} size="small">
-                {/* <InputLabel id="demo-select-small">Age</InputLabel> */}
-                <Select
-                  // labelId="demo-select-small"
-                  id="demo-select-small"
-                  value={age}
-                  variant="filled"
-                  label="Age"
-                  onChange={(e) => setAge(e.target.value)}
-                >
-                  {attributeTypes.map((type) => (
-                    <MenuItem value={type.value}>{type.label}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          ),
-        }}
-      />
-    </div>
+    <Box sx={{ "& > :not(style)": { m: 1 } }}>
+      <Grid container>
+        <Grid item xs={12}>
+          <Fab
+            aria-label="add"
+            color="primary"
+            variant="extended"
+            onClick={addNewItem}
+          >
+            <AddIcon /> Add New Item
+          </Fab>
+        </Grid>
+        {items?.map((item, index) => (
+          <Grid sx={{ m: 1 }} item lg={2} xs={12}>
+            <ItemCard
+              title={`${selectedInventory?.objType} - ${
+                item[selectedInventory?.objTitle.toLowerCase()]
+              }`}
+              content={renderContent(item, index)}
+              onAction={() => removeItem(index)}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 };
 
