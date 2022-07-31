@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import Stack from "@mui/material/Stack";
+import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -11,28 +10,12 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 
-import { getTestData } from "../store/test/actions";
-
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
-
 const Layout = () => {
-  const dispatch = useDispatch();
-  const inventories = useSelector((state) => {
-    console.log("sss", state);
-    return state.inventoryData.inventories;
-  });
-  // const [inventoryList, setInventoryList] = useState([...inventories]);
-
-  useEffect(() => {
-    // dispatch(getTestData());
-  }, [dispatch]);
+  const inventories = useSelector((state) => state.inventoryData.inventories);
 
   const [anchorElNav, setAnchorElNav] = useState(null);
 
@@ -140,15 +123,6 @@ const Layout = () => {
                 EzyInventory
               </Typography>
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                {/* {pages.map((page) => (
-                  <Button
-                    key={page}
-                    onClick={handleCloseNavMenu}
-                    sx={{ my: 2, color: "white", display: "block" }}
-                  >
-                    {page}
-                  </Button>
-                ))} */}
                 <Button
                   key="dashboard"
                   onClick={handleCloseNavMenu}
@@ -167,9 +141,6 @@ const Layout = () => {
                       >
                         <Link to={`/inventories/${inv.id}`}>{inv.objType}</Link>
                       </Button>
-                      // <MenuItem key={inv.objType} onClick={handleCloseNavMenu}>
-                      //   <Link to={`/inventories/${inv.id}`}>{inv.objType}</Link>
-                      // </MenuItem>
                     )
                 )}
                 <Button
@@ -187,13 +158,7 @@ const Layout = () => {
       <Grid item xs={12}>
         <Outlet />
       </Grid>
-      {/* <Grid item xs={8}>
-        <Item>xs=8</Item>
-      </Grid> */}
     </Grid>
-    // <div>
-
-    // </div>
   );
 };
 

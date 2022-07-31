@@ -22,9 +22,6 @@ const Inventories = () => {
 
   useEffect(() => {
     dispatch(setInventoryTypes(inventoryList));
-    // throttle(() => {
-    //   // dispatch(setInventoryTypes(inventoryList));
-    // }, 500);
   }, [dispatch, inventoryList]);
 
   const addNewField = async (index) => {
@@ -33,6 +30,7 @@ const Inventories = () => {
     await setInventoryList(invList);
   };
 
+  // Add new type with dummy data
   const addNewType = () => {
     const invList = [...inventoryList];
     const uuid = uuidv4();
@@ -45,12 +43,14 @@ const Inventories = () => {
     setInventoryList(invList);
   };
 
+  // Remove type
   const removeItem = (index) => {
     const invList = [...inventoryList];
     invList.splice(index, 1);
     setInventoryList(invList);
   };
 
+  // Handle all the change values here 
   const onValueChange = (e, index, index2, attribute) => {
     const value = e.target.value;
     const invList = [...inventoryList];

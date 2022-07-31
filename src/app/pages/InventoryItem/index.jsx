@@ -26,14 +26,6 @@ const Inventory = ({ inventoryItemId }) => {
   const [fields, setFields] = useState([]);
   const [selectedInventory, setInventory] = useState();
 
-  // useEffect(() => {
-  //   // console.log("init ===", items);
-  //   console.log(items, inventoryId);
-  //   if (!items) return;
-  //   // items.length > 0 &&
-  //   dispatch(setInventoryItem({ [inventoryId]: items }));
-  // }, [dispatch, inventoryId, items]);
-
   useEffect(() => {
     setItems(inventoryList);
   }, [inventoryId]);
@@ -50,14 +42,12 @@ const Inventory = ({ inventoryItemId }) => {
         ? e.target.checked
         : e.target.value;
     const itemsClone = [...items];
-    console.log(JSON.stringify(items));
-    console.log(JSON.stringify(itemsClone));
     itemsClone[index][attributeName] = value;
     setItems(itemsClone);
-    console.log(e, index, attributeName, elementType);
     dispatch(setInventoryItem({ [inventoryId]: itemsClone }));
   };
 
+  // Get field props relevant to the inventory type
   const pickField = (field, item, index) => {
     const type = field.type;
     const attributeName = field.label.toLowerCase();
@@ -110,16 +100,20 @@ const Inventory = ({ inventoryItemId }) => {
     }
   };
 
-  const renderContent = (item, index) => {
-    return (
-      <>
-        {selectedInventory?.fields?.map((field) =>
-          pickField(field, item, index)
-        )}
-      </>
-    );
-  };
+  const renderContent = (item, index) => (
+    <Box
+      component="form"
+      sx={{
+        "& .MuiTextField-root": { m: 1 },
+      }}
+      noValidate
+      autoComplete="off"
+    >
+      {selectedInventory?.fields?.map((field) => pickField(field, item, index))}
+    </Box>
+  );
 
+  // Create field type obj here
   const getFields = (fields) => {
     let obj = {};
     fields?.map((filed) => {
@@ -129,6 +123,7 @@ const Inventory = ({ inventoryItemId }) => {
     return obj;
   };
 
+  // Add new inventory item
   const addNewItem = debounce(() => {
     const itemsClone = items ? [...items] : [];
     itemsClone.push({ ...fields });
@@ -136,6 +131,7 @@ const Inventory = ({ inventoryItemId }) => {
     dispatch(setInventoryItem({ [inventoryId]: itemsClone }));
   }, 500);
 
+  // Remove inventory item
   const removeItem = (index) => {
     const itemsClone = [...items];
     itemsClone.splice(index, 1);

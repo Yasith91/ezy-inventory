@@ -1,3 +1,4 @@
+// Input types
 const attributeTypes = [
   { value: "number", label: "Number" },
   { value: "date", label: "Date" },
